@@ -17,3 +17,4 @@ html = get_page_content(login_url)
 soup = get_soup(html)
 
 loginInput = ""
+
