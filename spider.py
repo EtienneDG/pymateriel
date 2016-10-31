@@ -1,5 +1,7 @@
 import bs4
 import requests
+import csv
+import datetime
 
 # credentials
 login = ""
@@ -21,13 +23,16 @@ def soup_get_deepest_child(soup_element):
 
 
 def table_to_csv(soup_table):
+    run_date = str(datetime.datetime.now().replace(microsecond=0))
     for row in soup_table.find("tbody").find_all("tr"):
         cells = row.find_all("td", recursive=False)
         product = soup_get_deepest_child(cells[0])
         price = soup_get_deepest_child(cells[2])
-        availability = soup_get_deepest_child(cells[3])
+        availability = str(True if soup_get_deepest_child(cells[3]) == "EN STOCK" else False)
         print(product + " " + price + " " + availability)
-
+        with open("shopping_list.csv", "a+", newline="\n") as csv_file:
+            csv_writer = csv.writer(csv_file, dialect="unix")
+            csv_writer.writerow([run_date,  product, price, availability])
 
 # MAIN
 current_session = requests.Session()
